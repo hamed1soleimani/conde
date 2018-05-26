@@ -4,10 +4,13 @@
 #include <ctime>
 
 #include <set>
+#include <tuple>
 #include <vector>
 
 #include <boost/functional/hash.hpp>
 #include <tbb/concurrent_hash_map.h>
+
+#include "tuple_generator.h"
 
 template <typename Dimensions, typename Metrics> class HashTable {
 public:
@@ -18,13 +21,14 @@ public:
 
   void AddEntry(const Dimensions &dimensions, const TimedMetrics &metrics);
 
-  template <typename AggregationMethods,
-            typename = std::enable_if_t<std::tuple_size_v<Metrics> ==
-                                        std::tuple_size_v<Metrics>>>
+  template <
+      typename AggregationMethods,
+      typename std::enable_if_t<std::tuple_size<Metrics>::value ==
+                                std::tuple_size<AggregationMethods>::value>>
   Records Clone(bool aggregate);
 
 private:
-  using Hasher = boost::functional::hash<Dimensions>;
+  using Hasher = boost::hash<Dimensions>;
   using TBBHashTable =
       tbb::concurrent_hash_map<Dimensions, std::set<TimedMetrics>, Hasher>;
 

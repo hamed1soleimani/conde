@@ -1,10 +1,11 @@
 #ifndef TUPLE_GENERATOR
 #define TUPLE_GENERATOR
 
-#include <boost/preprocessor/repetition/repeat.hpp>
 #include <cassert>
 #include <tuple>
 #include <type_traits>
+
+#include <boost/preprocessor/repetition/repeat.hpp>
 
 struct any_type {
   template <class T> constexpr operator T();
