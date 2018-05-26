@@ -9,17 +9,18 @@
 #include <boost/functional/hash.hpp>
 #include <tbb/concurrent_hash_map.h>
 
-template <typename Dimensions, typename Metrics, typename AggregationMethods,
-          typename = std::enable_if_t<std::tuple_size_v<Metrics> ==
-                                      std::tuple_size_v<AggregationMethods>>>
-class HashTable {
+template <typename Dimensions, typename Metrics> class HashTable {
 public:
   using TimedMetrics = std::pair<Metrics, time_t>;
   using Records = std::vector<std::pair<Dimensions, TimedMetrics>>;
 
   enum class AggregationMethod : uint8_t { SUM, AVERAGE, MIN, MAX };
 
-  void AddEntry(Dimensions dimensions, TimedMetrics metrics);
+  void AddEntry(const Dimensions &dimensions, const TimedMetrics &metrics);
+
+  template <typename AggregationMethods,
+            typename = std::enable_if_t<std::tuple_size_v<Metrics> ==
+                                        std::tuple_size_v<Metrics>>>
   Records Clone(bool aggregate);
 
 private:
