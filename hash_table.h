@@ -12,6 +12,12 @@
 
 #include "tuple_generator.h"
 
+template <typename T> struct TupleHasher {
+  size_t operator()(const T &t) const { return hash(t); }
+  size_t hash(const T &t) const { return boost::hash_value(t); }
+  bool equal(const T &t1, const T &t2) const { return t1 == t2; }
+};
+
 template <typename Dimensions, typename Metrics> class HashTable {
 public:
   using TimedMetrics = std::pair<Metrics, time_t>;
@@ -30,9 +36,9 @@ public:
   Records Clone();
 
 private:
-  using Hasher = boost::hash<Dimensions>;
   using TBBHashTable =
-      tbb::concurrent_hash_map<Dimensions, std::set<TimedMetrics>, Hasher>;
+      tbb::concurrent_hash_map<Dimensions, std::set<TimedMetrics>,
+                               TupleHasher<Dimensions>>;
 
   TBBHashTable tbb_hash_table;
 };

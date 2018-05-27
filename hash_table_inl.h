@@ -15,7 +15,8 @@ template <typename Dimensions, typename Metrics>
 template <typename AggregationMethods,
           typename std::enable_if_t<std::tuple_size<Metrics>::value ==
                                     std::tuple_size<AggregationMethods>::value>>
-auto HashTable<Dimensions, Metrics>::Clone(AggregationMethods aggregation_methods) -> Records {
+auto HashTable<Dimensions, Metrics>::Clone(
+    AggregationMethods aggregation_methods) -> Records {
   throw "not implemented yet!";
 }
 

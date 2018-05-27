@@ -14,7 +14,7 @@ struct any_type {
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"
 template <class T, std::size_t... I>
 decltype(void(T{(I, std::declval<any_type>())...}), std::true_type{})
-    test_is_braces_constructible_n(std::index_sequence<I...>);
+test_is_braces_constructible_n(std::index_sequence<I...>);
 #pragma clang diagnostic pop
 template <class, class...> std::false_type test_is_braces_constructible_n(...);
 template <class T, std::size_t N>
@@ -24,15 +24,13 @@ using is_braces_constructible_n =
 template <class T, std::size_t L = 0u, std::size_t R = sizeof(T) + 1u>
 constexpr std::size_t to_tuple_size_f() {
   constexpr std::size_t M = (L + R) / 2u;
-  if
-    constexpr(M == 0) return std::is_empty<T>{}
-        ? 0u
-        : throw "Unable to determine number of elements";
-  else if
-    constexpr(L == M) return M;
-  else if
-    constexpr(
-        is_braces_constructible_n<T, M>{}) return to_tuple_size_f<T, M, R>();
+  if constexpr (M == 0)
+    return std::is_empty<T>{} ? 0u
+                              : throw "Unable to determine number of elements";
+  else if constexpr (L == M)
+    return M;
+  else if constexpr (is_braces_constructible_n<T, M>{})
+    return to_tuple_size_f<T, M, R>();
   else
     return to_tuple_size_f<T, L, M>();
 }
@@ -53,7 +51,7 @@ auto to_tuple_impl(T &&, std::integral_constant<std::size_t, 0>) noexcept {
   template <class T>                                                           \
   auto to_tuple_impl(T &&object,                                               \
                      std::integral_constant<std::size_t, N + 1>) noexcept {    \
-    auto && [p BOOST_PP_REPEAT_##Z(N, TO_TUPLE_P, nil)] = object;              \
+    auto &&[p BOOST_PP_REPEAT_##Z(N, TO_TUPLE_P, nil)] = object;               \
     return std::make_tuple(p BOOST_PP_REPEAT_##Z(N, TO_TUPLE_P, nil));         \
   }
 BOOST_PP_REPEAT(TO_TUPLE_MAX, TO_TUPLE_SPECIALIZATION, nil)
