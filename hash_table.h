@@ -25,7 +25,9 @@ public:
       typename AggregationMethods,
       typename std::enable_if_t<std::tuple_size<Metrics>::value ==
                                 std::tuple_size<AggregationMethods>::value>>
-  Records Clone(bool aggregate);
+  Records Clone(AggregationMethods aggregation_methods);
+
+  Records Clone();
 
 private:
   using Hasher = boost::hash<Dimensions>;
@@ -34,5 +36,7 @@ private:
 
   TBBHashTable tbb_hash_table;
 };
+
+#include "hash_table_inl.h"
 
 #endif
