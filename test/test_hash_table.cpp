@@ -30,7 +30,9 @@ TEST(HashTableTest,
   EXPECT_EQ(records[0].second.second, now);
 }
 
-TEST(HashTableTest, unaggregated_clone_should_not_contains_duplicated_records) {
+TEST(
+    HashTableTest,
+    unaggregated_clone_shold_contains_duplicated_records_when_duplicates_added) {
   SampleTable table;
   const std::string dimension = "fist_dimension_value";
   const int metric = 999;
@@ -39,23 +41,14 @@ TEST(HashTableTest, unaggregated_clone_should_not_contains_duplicated_records) {
   table.AddEntry(tuple<string>(dimension),
                  SampleTable::TimedMetrics(tuple<int>(metric), now));
   SampleTable::Records records = table.Clone();
-  EXPECT_EQ(records.size(), 1);
+  EXPECT_EQ(records.size(), 2);
   EXPECT_EQ(std::get<0>(records[0].first), dimension);
   EXPECT_EQ(std::get<0>(records[0].second.first), metric);
   EXPECT_EQ(records[0].second.second, now);
-}
-
-TEST(HashTableTest,
-     unaggregated_clone_should_count_duplicated_records_at_different_times) {
-  SampleTable table;
-  const std::string dimension = "fist_dimension_value";
-  const int metric = 999;
-  const time_t now = time(nullptr);
-  table.AddEntry(dimension, SampleTable::TimedMetrics(metric, now));
-  table.AddEntry(tuple<string>(dimension),
-                 SampleTable::TimedMetrics(tuple<int>(metric), now + 1));
-  SampleTable::Records records = table.Clone();
-  EXPECT_EQ(records.size(), 2);
+  EXPECT_EQ(std::get<0>(records[0].first), std::get<0>(records[1].first));
+  EXPECT_EQ(std::get<0>(records[0].second.first),
+            std::get<0>(records[1].second.first));
+  EXPECT_EQ(records[0].second.second, records[1].second.second);
 }
 
 TEST(HashTableTest,
@@ -123,7 +116,7 @@ TEST(HashTableTest,
 }
 
 TEST(HashTableTest,
-     hash_table_should_detect_duplications_from_multiple_threads) {
+     hash_table_should_handle_duplications_from_multiple_threads) {
   SampleTable table;
   const std::string dimension = "dimension_value";
   const time_t now = time(nullptr);
@@ -145,5 +138,5 @@ TEST(HashTableTest,
   }
 
   SampleTable::Records records = table.Clone();
-  EXPECT_EQ(records.size(), 1000000);
+  EXPECT_EQ(records.size(), 10000000);
 }

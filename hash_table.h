@@ -3,7 +3,6 @@
 
 #include <ctime>
 
-#include <set>
 #include <tuple>
 #include <vector>
 
@@ -37,7 +36,7 @@ public:
 
 private:
   using TBBHashTable =
-      tbb::concurrent_hash_map<Dimensions, std::set<TimedMetrics>,
+      tbb::concurrent_hash_map<Dimensions, std::vector<TimedMetrics>,
                                TupleHasher<Dimensions>>;
 
   TBBHashTable tbb_hash_table;

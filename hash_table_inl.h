@@ -5,10 +5,10 @@ template <typename Dimensions, typename Metrics>
 void HashTable<Dimensions, Metrics>::AddEntry(const Dimensions &dimensions,
                                               const TimedMetrics &metrics) {
   typename TBBHashTable::accessor accessor;
-  tbb_hash_table.insert(accessor,
-                        std::pair<const Dimensions &, std::set<TimedMetrics>>{
-                            dimensions, std::set<TimedMetrics>{}});
-  accessor->second.insert(metrics);
+  tbb_hash_table.insert(
+      accessor, std::pair<const Dimensions &, std::vector<TimedMetrics>>{
+                    dimensions, std::vector<TimedMetrics>{}});
+  accessor->second.push_back(metrics);
 }
 
 template <typename Dimensions, typename Metrics>
